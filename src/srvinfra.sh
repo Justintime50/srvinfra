@@ -7,12 +7,12 @@ WEBSITE_DIR="$HOME/git/personal/harvey/projects"
 
 deploy() {
     # Deploy a service or website depending on context
-    if [[ "$2" = "service" ]] ; then
-        docker-compose -f "$SERVICES_DIR"/"$3"/docker-compose.yml up -d
-    elif [[ "$2" = "website" ]] ; then
-        docker-compose -f "$WEBSITE_DIR"/"$3"/docker-compose.yml -f docker-compose-prod.yml up -d
+    if [[ "$1" = "service" ]] ; then
+        docker-compose -f "$SERVICES_DIR"/"$2"/docker-compose.yml up -d
+    elif [[ "$1" = "website" ]] ; then
+        docker-compose -f "$WEBSITE_DIR"/"$2"/docker-compose.yml -f docker-compose-prod.yml up -d
     else
-        echo "$2 isn't a valid action, try again."
+        echo "$1 isn't a valid action, try again."
     fi
 }
 
@@ -45,11 +45,11 @@ deploy_all() {
 
 update() {
     # Update a single service, assumes the Docker tag has been updated or is not pinned
-    echo "Updating $2..."
-    cd "$SERVICES_DIR"/"$2" || exit 1
+    echo "Updating $1..."
+    cd "$SERVICES_DIR"/"$1" || exit 1
     docker-compose pull && docker-compose up -d || exit 1
     cd || exit 1
-    echo "$2 updated!"
+    echo "$1 updated!"
 }
 
 update_all() {

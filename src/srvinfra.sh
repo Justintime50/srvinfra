@@ -10,7 +10,7 @@ deploy() {
     if [[ "$1" = "service" ]] ; then
         docker-compose -f "$SERVICES_DIR"/"$2"/docker-compose.yml up -d
     elif [[ "$1" = "website" ]] ; then
-        docker-compose -f "$WEBSITE_DIR"/"$2"/docker-compose.yml -f docker-compose-prod.yml up -d
+        docker-compose -f "$WEBSITE_DIR"/"$2"/docker-compose.yml -f "$WEBSITE_DIR"/"$2"/docker-compose-prod.yml up -d
     else
         echo "$1 isn't a valid action, try again."
     fi

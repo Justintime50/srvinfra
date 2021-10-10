@@ -8,7 +8,7 @@ WEBSITE_DIR="$HOME/git/personal/harvey/projects"
 deploy() {
     # Deploy a service or website depending on context
     if [[ "$2" = "service" ]] ; then
-        docker-compose -f "$SERVICE_DIR"/"$3"/docker-compose.yml up -d
+        docker-compose -f "$SERVICES_DIR"/"$3"/docker-compose.yml up -d
     elif [[ "$2" = "website" ]] ; then
         docker-compose -f "$WEBSITE_DIR"/"$3"/docker-compose.yml -f docker-compose-prod.yml up -d
     else

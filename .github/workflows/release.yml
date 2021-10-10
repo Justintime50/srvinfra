@@ -1,0 +1,20 @@
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  homebrew-releaser:
+    runs-on: ubuntu-latest
+    name: homebrew-releaser
+    steps:
+      - name: Release my project to my Homebrew tap
+        uses: Justintime50/homebrew-releaser@v1
+        with:
+          commit_owner: Justintime50
+          commit_email: 39606064+Justintime50@users.noreply.github.com
+          homebrew_owner: Justintime50
+          homebrew_tap: homebrew-formulas
+          install: bin.install "src/srvinfra.sh" => "srvinfra"
+          github_token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          update_readme_table: true

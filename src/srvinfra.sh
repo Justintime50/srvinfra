@@ -5,19 +5,19 @@
 SERVICES_DIR="$HOME/git/personal/harvey/projects/justintime50/server-infra/src"
 WEBSITE_DIR="$HOME/git/personal/harvey/projects"
 
+# Deploy a service or website depending on context
 deploy() {
-    # Deploy a service or website depending on context
     if [[ "$1" = "service" ]] ; then
-        docker-compose -f "$SERVICES_DIR"/"$2"/docker-compose.yml up -d
+        docker-compose -f "$SERVICES_DIR"/"$2"/docker-compose.yml up -d --build
     elif [[ "$1" = "website" ]] ; then
-        docker-compose -f "$WEBSITE_DIR"/"$2"/docker-compose.yml -f "$WEBSITE_DIR"/"$2"/docker-compose-prod.yml up -d
+        docker-compose -f "$WEBSITE_DIR"/"$2"/docker-compose.yml -f "$WEBSITE_DIR"/"$2"/docker-compose-prod.yml up -d --build
     else
         echo "$1 isn't a valid action, try again."
     fi
 }
 
+# Deploy all is perfect for a cold-start server deployment
 deploy_all() {
-    # Deploy all is perfect for a cold-start server deployment
     echo "You are about to deploy all production services and websites, before proceeding, ensure that Traefik is up and running. Press any button to continue."
     read -r
     echo "Deploying all services and websites..."
@@ -26,7 +26,7 @@ deploy_all() {
     cd "$SERVICES_DIR" || exit 1
     for DIR in */ ; do
         echo "Deploying $DIR..."
-        docker-compose -f "$DIR"/docker-compose.yml up -d
+        docker-compose -f "$DIR"/docker-compose.yml up -d --build
     done
     cd || exit 1
 
@@ -36,29 +36,34 @@ deploy_all() {
         cd "$TOP_DIR" || exit 1
         for DIR in */ ; do
             echo "Deploying $DIR..."
-            docker-compose -f "$DIR"/docker-compose.yml -f "$DIR"/docker-compose-prod.yml up -d
+            docker-compose -f "$DIR"/docker-compose.yml -f "$DIR"/docker-compose-prod.yml up -d --build
         done
         cd .. || exit 1
     done
     cd || exit 1
 }
 
+# Get the status of a Docker container by name
+status() {
+    docker ps --filter name="$1"
+}
+
+# Update a single service, assumes the Docker tag has been updated or is not pinned
 update() {
-    # Update a single service, assumes the Docker tag has been updated or is not pinned
     echo "Updating $1..."
     cd "$SERVICES_DIR"/"$1" || exit 1
-    docker-compose pull && docker-compose up -d || exit 1
+    docker-compose pull && docker-compose up -d --build || exit 1
     cd || exit 1
     echo "$1 updated!"
 }
 
+# Updates all services, assumes the Docker tags have been updated or are not pinned
 update_all() {
-    # Updates all services, assumes the Docker tags have been updated or are not pinned
     echo "Updating all services..."
     cd "$SERVICES_DIR" || exit 1
     for DIR in */ ; do
         printf '%s\n' "$DIR"
-        cd "$DIR" && docker-compose pull && docker-compose up -d
+        cd "$DIR" && docker-compose pull && docker-compose up -d --build
         echo "$DIR updating..."
         cd .. || exit 1
     done

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.2.0 (2021-10-12)
+
+* Adds a new `status` command to retrieve the status of a Docker container by name
+* Always rebuilds Docker images via `--build`
+
 ## v0.1.2 (2021-10-10)
 
 * Fixes a bug where the reference to deploy a website was incorrect

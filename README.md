@@ -32,6 +32,9 @@ srvinfra deploy website justintime50/justinpaulhammond
 # Deploy all services and websites (great for server cold-start)
 srvinfra deploy_all
 
+# Get the status of a Docker container by name
+srvinfra status justinpaulhammond
+
 # Update a service
 srvinfra update plex
 

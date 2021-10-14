@@ -43,6 +43,16 @@ deploy_all() {
     cd || exit 1
 }
 
+export_database() {
+    # TODO: Don't send password on the CLI
+    docker exec -i "$1-db" mysqldump -uroot -p"'$2'" "$1" > "$3"
+}
+
+import_database() {
+    # TODO: Don't send password on the CLI
+    docker exec -i "$1-db" mysql -uroot -p"'$2'" "$1" < "$3"
+}
+
 # Get the status of a Docker container by name
 status() {
     docker ps --filter name="$1"

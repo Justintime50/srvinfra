@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.0 (2021-10-14)
+
+* Adds `import_database` and `export_database` commands for easy data migration to and from Docker containers
+
 ## v0.2.0 (2021-10-12)
 
 * Adds a new `status` command to retrieve the status of a Docker container by name

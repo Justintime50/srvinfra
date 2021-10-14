@@ -32,6 +32,12 @@ srvinfra deploy website justintime50/justinpaulhammond
 # Deploy all services and websites (great for server cold-start)
 srvinfra deploy_all
 
+# Export a SQL database from a Docker container
+srvinfra export_database DATABASE_NAME ROOT_PASSWORD PATH_TO_SQL_OUTPUT
+
+# Import a SQL database to a Docker container
+srvinfra import_database DATABASE_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
+
 # Get the status of a Docker container by name
 srvinfra status justinpaulhammond
 

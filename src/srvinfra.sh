@@ -8,9 +8,11 @@ WEBSITE_DIR="$HOME/git/personal/harvey/projects"
 # Deploy a service or website depending on context
 deploy() {
     if [[ "$1" = "service" ]] ; then
-        docker-compose -f "$SERVICES_DIR"/"$2"/docker-compose.yml up -d --build
+        cd "$SERVICES_DIR"/"$2" || exit 1
+        docker-compose -f docker-compose.yml up -d --build
     elif [[ "$1" = "website" ]] ; then
-        docker-compose -f "$WEBSITE_DIR"/"$2"/docker-compose.yml -f "$WEBSITE_DIR"/"$2"/docker-compose-prod.yml up -d --build
+        cd "$WEBSITE_DIR"/"$2" || exit 1
+        docker-compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build
     else
         echo "$1 isn't a valid action, try again."
     fi
@@ -28,7 +30,6 @@ deploy_all() {
         echo "Deploying $DIR..."
         docker-compose -f "$DIR"/docker-compose.yml up -d --build
     done
-    cd || exit 1
 
     # Deploy websites
     cd "$WEBSITE_DIR" || exit 1
@@ -40,17 +41,18 @@ deploy_all() {
         done
         cd .. || exit 1
     done
-    cd || exit 1
 }
 
 export_database() {
     # TODO: Don't send password on the CLI
-    docker exec -i "$1-db" mysqldump -uroot -p"'$2'" "$1" > "$3"
+    local sql_filename
+    sql_filename=${3:-"db.sql"}
+    docker exec -i "$1" mysqldump -uroot -p"'$2'" "$1" > "$sql_filename"
 }
 
 import_database() {
     # TODO: Don't send password on the CLI
-    docker exec -i "$1-db" mysql -uroot -p"'$2'" "$1" < "$3"
+    docker exec -i "$1" mysql -uroot -p"'$2'" "$1" < "$3"
 }
 
 # Get the status of a Docker container by name
@@ -63,7 +65,6 @@ update() {
     echo "Updating $1..."
     cd "$SERVICES_DIR"/"$1" || exit 1
     docker-compose pull && docker-compose up -d --build || exit 1
-    cd || exit 1
     echo "$1 updated!"
 }
 
@@ -77,7 +78,6 @@ update_all() {
         echo "$DIR updating..."
         cd .. || exit 1
     done
-    cd || exit 1
 }
 
 command_router() {

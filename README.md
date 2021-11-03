@@ -33,7 +33,8 @@ srvinfra deploy website justintime50/justinpaulhammond
 srvinfra deploy_all
 
 # Export a SQL database from a Docker container
-srvinfra export_database DATABASE_NAME ROOT_PASSWORD PATH_TO_SQL_OUTPUT
+# Default PATH_TO_SQL_FILE: 'db.sql'
+srvinfra export_database DATABASE_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
 
 # Import a SQL database to a Docker container
 srvinfra import_database DATABASE_NAME ROOT_PASSWORD PATH_TO_SQL_FILE

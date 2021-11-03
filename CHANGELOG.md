@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v0.3.1 (2021-11-03)
+
+* Adds default filename to sql export of `db.sql` in the current directory
+* No longer assumes `-db` suffix on database container names (was not compatible with clustered containers)
+* Changes directories when running the deploy commands instead of referencing `docker-compose` files from another directory (fixes an issue where relative paths inside of `docker-compose` files could not be found due to how we were referencing them)
+* Removes a bunch of additional unnecessary `cd` commands
+
 ## v0.3.0 (2021-10-14)
 
 * Adds `import_database` and `export_database` commands for easy data migration to and from Docker containers

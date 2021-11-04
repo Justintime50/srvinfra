@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.2 (2021-11-03)
+
+* Fixes a bug that didn't properly pass the database name to the import/export function after the changes in `v0.3.1`
+
 ## v0.3.1 (2021-11-03)
 
 * Adds default filename to sql export of `db.sql` in the current directory

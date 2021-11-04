@@ -47,12 +47,19 @@ export_database() {
     # TODO: Don't send password on the CLI
     local sql_filename
     sql_filename=${3:-"db.sql"}
-    docker exec -i "$1" mysqldump -uroot -p"'$2'" "$1" > "$sql_filename"
+
+    local database_name
+    database_name="$(echo "$1" | cut -d: -f1)"
+
+    docker exec -i "$1" mysqldump -uroot -p"'$2'" "$database_name" > "$sql_filename"
 }
 
 import_database() {
     # TODO: Don't send password on the CLI
-    docker exec -i "$1" mysql -uroot -p"'$2'" "$1" < "$3"
+    local database_name
+    database_name="$(echo "$1" | cut -d: -f1)"
+
+    docker exec -i "$1" mysql -uroot -p"'$2'" "$database_name" < "$3"
 }
 
 # Get the status of a Docker container by name

@@ -51,7 +51,7 @@ export_database() {
     local database_name
     database_name="$(echo "$1" | cut -d- -f1)"
 
-    docker exec -i "$1" mysqldump -uroot -p"'$2'" "$database_name" > "$sql_filename"
+    docker exec -i "$1" mysqldump -uroot -p"$2" "$database_name" > "$sql_filename"
 }
 
 import_database() {
@@ -59,7 +59,7 @@ import_database() {
     local database_name
     database_name="$(echo "$1" | cut -d- -f1)"
 
-    docker exec -i "$1" mysql -uroot -p"'$2'" "$database_name" < "$3"
+    docker exec -i "$1" mysql -uroot -p"$2" "$database_name" < "$3"
 }
 
 # Get the status of a Docker container by name

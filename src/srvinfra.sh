@@ -49,7 +49,7 @@ export_database() {
     sql_filename=${3:-"db.sql"}
 
     local database_name
-    database_name="$(echo "$1" | cut -d: -f1)"
+    database_name="$(echo "$1" | cut -d- -f1)"
 
     docker exec -i "$1" mysqldump -uroot -p"'$2'" "$database_name" > "$sql_filename"
 }
@@ -57,7 +57,7 @@ export_database() {
 import_database() {
     # TODO: Don't send password on the CLI
     local database_name
-    database_name="$(echo "$1" | cut -d: -f1)"
+    database_name="$(echo "$1" | cut -d- -f1)"
 
     docker exec -i "$1" mysql -uroot -p"'$2'" "$database_name" < "$3"
 }

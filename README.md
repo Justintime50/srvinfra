@@ -34,10 +34,12 @@ srvinfra deploy_all
 
 # Export a SQL database from a Docker container
 # Default PATH_TO_SQL_FILE: 'db.sql'
-srvinfra export_database DATABASE_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
+# Note: May need to quote `ROOT_PASSWORD`
+srvinfra export_database DATABASE_CONTAINER_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
 
 # Import a SQL database to a Docker container
-srvinfra import_database DATABASE_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
+# Note: May need to quote `ROOT_PASSWORD`
+srvinfra import_database DATABASE_CONTAINER_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
 
 # Get the status of a Docker container by name
 srvinfra status justinpaulhammond

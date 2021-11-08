@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.4.0 (2021-11-07)
+
+* Adds new `decrypt_database_backup` command
+* Adds new `export_database_secure` command
+* Adds new `help` command to list all available commands
+
 ## v0.3.2-4 (2021-11-03)
 
 * Fixes a bug that didn't properly pass the database name to the import/export function after the changes in `v0.3.1`

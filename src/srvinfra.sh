@@ -5,8 +5,69 @@
 SERVICES_DIR="$HOME/git/personal/harvey/projects/justintime50/server-infra/src"
 WEBSITE_DIR="$HOME/git/personal/harvey/projects"
 
+
+### Databases
+
+decrypt_database_backup() {
+    # Parameters
+    # 1. sql filename
+    # 2. sql filename secret (for decryption)
+    local output_sql_name
+    output_sql_name="$(echo "$1" | cut -d. -f1)"
+
+    openssl enc -aes-256-cbc -d -in "$1" -k "$2" | gzip -d > "$output_sql_name".sql
+}
+
+export_database() {
+    # Parameters
+    # 1. container name
+    # 2. root password
+    # 3. (optional) output sql filename
+    local sql_filename
+    sql_filename=${3:-"database.sql"}
+
+    local database_name
+    database_name="$(echo "$1" | cut -d- -f1)"
+
+    # TODO: Don't send password on the CLI
+    docker exec -i "$1" mysqldump -uroot -p"$2" "$database_name" > "$sql_filename"
+}
+
+export_database_secure() {
+    # Parameters
+    # 1. container name
+    # 2. root password
+    # 3. (optional) output sql filename
+    local sql_filename
+    sql_filename=${3:-"database.enc.gz"}
+
+    local database_name
+    database_name="$(echo "$1" | cut -d- -f1)"
+    
+    # TODO: Don't send password on the CLI
+    # TODO: Use separate password to encrypt than the DB root password
+    docker exec -i "$1" mysqldump -uroot -p"$2" "$database_name" | gzip | openssl enc -aes-256-cbc -k "$2" > "$sql_filename"
+}
+
+import_database() {
+    # Parameters
+    # 1. container name
+    # 2. root password
+    # 3. output sql filename
+    local database_name
+    database_name="$(echo "$1" | cut -d- -f1)"
+
+    # TODO: Don't send password on the CLI
+    docker exec -i "$1" mysql -uroot -p"$2" "$database_name" < "$3"
+}
+
+### Services
+
 # Deploy a service or website depending on context
 deploy() {
+    # Parameters
+    # 1. enum: service | website
+    # 2. service/website directory path (eg: justintime50/justinpaulhammond)
     if [[ "$1" = "service" ]] ; then
         cd "$SERVICES_DIR"/"$2" || exit 1
         docker-compose -f docker-compose.yml up -d --build
@@ -43,25 +104,6 @@ deploy_all() {
     done
 }
 
-export_database() {
-    # TODO: Don't send password on the CLI
-    local sql_filename
-    sql_filename=${3:-"db.sql"}
-
-    local database_name
-    database_name="$(echo "$1" | cut -d- -f1)"
-
-    docker exec -i "$1" mysqldump -uroot -p"$2" "$database_name" > "$sql_filename"
-}
-
-import_database() {
-    # TODO: Don't send password on the CLI
-    local database_name
-    database_name="$(echo "$1" | cut -d- -f1)"
-
-    docker exec -i "$1" mysql -uroot -p"$2" "$database_name" < "$3"
-}
-
 # Get the status of a Docker container by name
 status() {
     docker ps --filter name="$1"
@@ -69,6 +111,8 @@ status() {
 
 # Update a single service, assumes the Docker tag has been updated or is not pinned
 update() {
+    # Parameters
+    # 1. service name
     echo "Updating $1..."
     cd "$SERVICES_DIR"/"$1" || exit 1
     docker-compose pull && docker-compose up -d --build || exit 1
@@ -87,6 +131,8 @@ update_all() {
     done
 }
 
+### Utilities
+
 command_router() {
     # Check if the command passed is valid or not. 
     # Run if it is a valid command, warn and exit if it is not.
@@ -97,6 +143,11 @@ command_router() {
         printf "%s\n" "\"$1\" is not a srvinfra command, please try again." >&2
         exit 1
     fi
+}
+
+help() {
+    echo "The following commands are available via 'srvinfra':"
+    declare -F | awk '{print $NF}' | sort | grep -E -v "^_" 
 }
 
 command_router "$@"

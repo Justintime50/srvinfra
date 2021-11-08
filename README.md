@@ -1,6 +1,6 @@
 # srvinfra
 
-`srvinfra` is a tool to deploy and update services and websites on a server hosted by Docker.
+`srvinfra` is a tool to deploy, update, and maintain services and websites on a server hosted by Docker.
 
 [![Build](https://github.com/Justintime50/srvinfra/workflows/build/badge.svg)](https://github.com/Justintime50/srvinfra/actions)
 [![Version](https://img.shields.io/github/v/tag/justintime50/srvinfra)](https://github.com/justintime50/srvinfra/releases)
@@ -32,10 +32,18 @@ srvinfra deploy website justintime50/justinpaulhammond
 # Deploy all services and websites (great for server cold-start)
 srvinfra deploy_all
 
+# Decrypt a compressed SQL backup file
+srvinfra decrypt_database_backup PATH_TO_SQL_FILE BACKUP_SECRET
+
 # Export a SQL database from a Docker container
-# Default PATH_TO_SQL_FILE: 'db.sql'
+# Default PATH_TO_SQL_FILE: './database.sql'
 # Note: May need to quote `ROOT_PASSWORD`
 srvinfra export_database DATABASE_CONTAINER_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
+
+# Export a compressed SQL databse from a Docker container and encrypt the backup (recommended)
+# Default PATH_TO_SQL_FILE: './database.sql'
+# Note: May need to quote `ROOT_PASSWORD`
+srvinfra export_database_secure DATABASE_CONTAINER_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
 
 # Import a SQL database to a Docker container
 # Note: May need to quote `ROOT_PASSWORD`
@@ -49,4 +57,14 @@ srvinfra update plex
 
 # Update all services
 srvinfra update_all
+
+# View all available commands
+srvinfra help
+```
+
+## Development
+
+```bash
+# Lint the project
+shellcheck src/srvinfra.sh
 ```

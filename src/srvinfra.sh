@@ -45,7 +45,6 @@ export_database_secure() {
     database_name="$(echo "$1" | cut -d- -f1)"
     
     # TODO: Don't send password on the CLI
-    # TODO: Use separate password to encrypt than the DB root password
     docker exec -i "$1" mysqldump -uroot -p"$2" "$database_name" | gzip | openssl enc -aes-256-cbc -k "$2" > "$sql_filename"
 }
 

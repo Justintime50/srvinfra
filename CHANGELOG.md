@@ -2,7 +2,7 @@
 
 ## v0.5.0 (2021-11-12)
 
-Added a parameter when importing/exporing databases to specify the database name instead of inferring it based on the image name
+Added a parameter when importing/exporing databases to specify the database name instead of inferring it based on the image name (closes #1)
 
 ## v0.4.0 (2021-11-07)
 

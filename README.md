@@ -38,16 +38,16 @@ srvinfra decrypt_database_backup PATH_TO_SQL_FILE BACKUP_SECRET
 # Export a SQL database from a Docker container
 # Default PATH_TO_SQL_FILE: './database.sql'
 # Note: May need to quote `ROOT_PASSWORD`
-srvinfra export_database DATABASE_CONTAINER_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
+srvinfra export_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
 # Export a compressed SQL databse from a Docker container and encrypt the backup (recommended)
 # Default PATH_TO_SQL_FILE: './database.sql'
 # Note: May need to quote `ROOT_PASSWORD`
-srvinfra export_database_secure DATABASE_CONTAINER_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
+srvinfra export_database_secure DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
 # Import a SQL database to a Docker container
 # Note: May need to quote `ROOT_PASSWORD`
-srvinfra import_database DATABASE_CONTAINER_NAME ROOT_PASSWORD PATH_TO_SQL_FILE
+srvinfra import_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
 # Get the status of a Docker container by name
 srvinfra status justinpaulhammond

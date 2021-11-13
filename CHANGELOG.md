@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.5.0 (2021-11-12)
+
+Added a parameter when importing/exporing databases to specify the database name instead of inferring it based on the image name
+
 ## v0.4.0 (2021-11-07)
 
 * Adds new `decrypt_database_backup` command

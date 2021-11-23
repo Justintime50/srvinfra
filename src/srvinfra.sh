@@ -5,7 +5,6 @@
 SERVICES_DIR="$HOME/git/personal/harvey/projects/justintime50/server-infra/src"
 WEBSITE_DIR="$HOME/git/personal/harvey/projects"
 
-
 ### Databases
 
 decrypt_database_backup() {
@@ -15,7 +14,7 @@ decrypt_database_backup() {
     local output_sql_name
     output_sql_name="$(echo "$1" | cut -d. -f1)"
 
-    openssl enc -aes-256-cbc -d -in "$1" -k "$2" | gzip -d > "$output_sql_name".sql
+    openssl enc -aes-256-cbc -d -in "$1" -k "$2" | gzip -d >"$output_sql_name".sql
 }
 
 export_database() {
@@ -28,7 +27,7 @@ export_database() {
     sql_filename=${4:-"database.sql"}
 
     # TODO: Don't send password on the CLI
-    docker exec -i "$1" mysqldump -uroot -p"$2" "$3" > "$sql_filename"
+    docker exec -i "$1" mysqldump -uroot -p"$2" "$3" >"$sql_filename"
 }
 
 export_database_secure() {
@@ -39,9 +38,9 @@ export_database_secure() {
     # 4. (optional) output sql filename
     local sql_filename
     sql_filename=${4:-"database.enc.gz"}
-    
+
     # TODO: Don't send password on the CLI
-    docker exec -i "$1" mysqldump -uroot -p"$2" "$3" | gzip | openssl enc -aes-256-cbc -k "$2" > "$sql_filename"
+    docker exec -i "$1" mysqldump -uroot -p"$2" "$3" | gzip | openssl enc -aes-256-cbc -k "$2" >"$sql_filename"
 }
 
 import_database() {
@@ -52,7 +51,7 @@ import_database() {
     # 4. output sql filename
 
     # TODO: Don't send password on the CLI
-    docker exec -i "$1" mysql -uroot -p"$2" "$3" < "$4"
+    docker exec -i "$1" mysql -uroot -p"$2" "$3" <"$4"
 }
 
 ### Services
@@ -62,10 +61,10 @@ deploy() {
     # Parameters
     # 1. enum: service | website
     # 2. service/website directory path (eg: justintime50/justinpaulhammond)
-    if [[ "$1" = "service" ]] ; then
+    if [[ "$1" = "service" ]]; then
         cd "$SERVICES_DIR"/"$2" || exit 1
         docker-compose -f docker-compose.yml up -d --build
-    elif [[ "$1" = "website" ]] ; then
+    elif [[ "$1" = "website" ]]; then
         cd "$WEBSITE_DIR"/"$2" || exit 1
         docker-compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build
     else
@@ -81,16 +80,16 @@ deploy_all() {
 
     # Deploy services
     cd "$SERVICES_DIR" || exit 1
-    for DIR in */ ; do
+    for DIR in */; do
         echo "Deploying $DIR..."
         docker-compose -f "$DIR"/docker-compose.yml up -d --build
     done
 
     # Deploy websites
     cd "$WEBSITE_DIR" || exit 1
-    for TOP_DIR in */ ; do
+    for TOP_DIR in */; do
         cd "$TOP_DIR" || exit 1
-        for DIR in */ ; do
+        for DIR in */; do
             echo "Deploying $DIR..."
             docker-compose -f "$DIR"/docker-compose.yml -f "$DIR"/docker-compose-prod.yml up -d --build
         done
@@ -117,7 +116,7 @@ update() {
 update_all() {
     echo "Updating all services..."
     cd "$SERVICES_DIR" || exit 1
-    for DIR in */ ; do
+    for DIR in */; do
         printf '%s\n' "$DIR"
         cd "$DIR" && docker-compose pull && docker-compose up -d --build
         echo "$DIR updating..."
@@ -128,10 +127,9 @@ update_all() {
 ### Utilities
 
 command_router() {
-    # Check if the command passed is valid or not. 
+    # Check if the command passed is valid or not.
     # Run if it is a valid command, warn and exit if it is not.
-    if type "$1" > /dev/null
-    then
+    if type "$1" >/dev/null; then
         "$@"
     else
         printf "%s\n" "\"$1\" is not a srvinfra command, please try again." >&2
@@ -141,7 +139,7 @@ command_router() {
 
 help() {
     echo "The following commands are available via 'srvinfra':"
-    declare -F | awk '{print $NF}' | sort | grep -E -v "^_" 
+    declare -F | awk '{print $NF}' | sort | grep -E -v "^_"
 }
 
 command_router "$@"

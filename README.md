@@ -8,7 +8,9 @@
 
 I store all my services and websites in the same place and have similar commands to update and deploy them but found myself needing to constantly navigate all over the filesystem to run Docker commands. With `srvinfra`, I can deploy and manage my services and websites with ease.
 
-**NOTE:** This project is currently tailored towards my unique setup, longterm I'd love to allow this tool to be configurable to anyone's setup.
+**NOTES:** 
+- This project is currently tailored towards my unique setup, longterm I'd love to allow this tool to be configurable to anyone's setup.
+- `srvinfra` assumes the `Docker Compose` version is `v2` and not `v1`
 
 ## Install
 

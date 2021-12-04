@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.6.0 (2021-12-04)
+
+* Docker compose commands changed from old `docker-compose` to new `docker compose` invocation
+
 ## v0.5.0 (2021-11-12)
 
 Added a parameter when importing/exporing databases to specify the database name instead of inferring it based on the image name (closes #1)

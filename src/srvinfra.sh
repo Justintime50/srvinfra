@@ -2,8 +2,8 @@
 
 # Srvinfra is a tool to deploy and update services and websites on a server hosted by Docker
 
-SERVICES_DIR="$HOME/git/personal/harvey/projects/justintime50/server-infra/src"
-WEBSITE_DIR="$HOME/git/personal/harvey/projects"
+SERVICES_DIR="$HOME/harvey/projects/justintime50/server-infra/src"
+WEBSITE_DIR="$HOME/harvey/projects"
 
 ### Databases
 

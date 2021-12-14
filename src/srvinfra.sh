@@ -66,7 +66,7 @@ deploy() {
         docker compose -f docker-compose.yml up -d --build
     elif [[ "$1" = "website" ]]; then
         cd "$WEBSITE_DIR"/"$2" || exit 1
-        docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build
+        docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build --quiet-pull
     else
         echo "$1 isn't a valid action, try again."
     fi
@@ -82,7 +82,7 @@ deploy_all() {
     cd "$SERVICES_DIR" || exit 1
     for DIR in */; do
         echo "Deploying $DIR..."
-        docker compose -f "$DIR"/docker-compose.yml up -d --build
+        docker compose -f "$DIR"/docker-compose.yml up -d --build --quiet-pull
     done
 
     # Deploy websites
@@ -91,7 +91,7 @@ deploy_all() {
         cd "$TOP_DIR" || exit 1
         for DIR in */; do
             echo "Deploying $DIR..."
-            docker compose -f "$DIR"/docker-compose.yml -f "$DIR"/docker-compose-prod.yml up -d --build
+            docker compose -f "$DIR"/docker-compose.yml -f "$DIR"/docker-compose-prod.yml up -d --build --quiet-pull
         done
         cd .. || exit 1
     done
@@ -108,7 +108,7 @@ update() {
     # 1. service name
     echo "Updating $1..."
     cd "$SERVICES_DIR"/"$1" || exit 1
-    docker compose pull && docker-compose up -d --build || exit 1
+    docker compose pull && docker-compose up -d --build --quiet || exit 1
     echo "$1 updated!"
 }
 
@@ -118,7 +118,7 @@ update_all() {
     cd "$SERVICES_DIR" || exit 1
     for DIR in */; do
         printf '%s\n' "$DIR"
-        cd "$DIR" && docker compose pull && docker-compose up -d --build
+        cd "$DIR" && docker compose pull && docker-compose up -d --build --quiet
         echo "$DIR updating..."
         cd .. || exit 1
     done

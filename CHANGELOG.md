@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.6.2 (2021-12-14)
+
+* Uses the `quiet` flag to suppress verbose (unnecessary) output during deployments
+
 ## v0.6.1 (2021-12-14)
 
 * Updates path to projects

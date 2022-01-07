@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## v0.6.3 (2022-01-07)
+
+* Fixes the invocation of the `quiet-pull` flag on `update` actions
+
 ## v0.6.2 (2021-12-14)
 
-* Uses the `quiet` flag to suppress verbose (unnecessary) output during deployments
+* Uses the `quiet-pull` flag to suppress verbose (unnecessary) output during deployments
 
 ## v0.6.1 (2021-12-14)
 

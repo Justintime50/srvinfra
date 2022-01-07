@@ -108,7 +108,7 @@ update() {
     # 1. service name
     echo "Updating $1..."
     cd "$SERVICES_DIR"/"$1" || exit 1
-    docker compose pull && docker-compose up -d --build --quiet || exit 1
+    docker compose pull && docker-compose up -d --build --quiet-pull || exit 1
     echo "$1 updated!"
 }
 
@@ -118,7 +118,7 @@ update_all() {
     cd "$SERVICES_DIR" || exit 1
     for DIR in */; do
         printf '%s\n' "$DIR"
-        cd "$DIR" && docker compose pull && docker-compose up -d --build --quiet
+        cd "$DIR" && docker compose pull && docker-compose up -d --build --quiet-pull
         echo "$DIR updating..."
         cd .. || exit 1
     done

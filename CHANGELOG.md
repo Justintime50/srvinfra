@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.7.0 (2022-02-06)
+
+* Removes the hard-coded env vars of the website and service directories and adds instructions on how users can customize their own locations on installation
+
 ## v0.6.3 (2022-01-07)
 
 * Fixes the invocation of the `quiet-pull` flag on `update` actions

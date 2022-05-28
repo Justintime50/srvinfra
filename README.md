@@ -62,6 +62,11 @@ srvinfra export_database_secure DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_N
 # Note: May need to quote `ROOT_PASSWORD`
 srvinfra import_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
+# Import an encrypted & compressed SQL database to a Docker container (command combines `decrypt_database_backup` and `import_database` commands)
+# Note: May need to quote `ROOT_PASSWORD`
+# ROOT_PASSWORD is assumed to be the same as the database secret used to encrypt it
+srvinfra import_encrypted_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
+
 # Get the status of a Docker container by name
 srvinfra status justinpaulhammond
 

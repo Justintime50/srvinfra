@@ -6,8 +6,8 @@
 
 decrypt_database_backup() {
     # Parameters
-    # 1. sql filename
-    # 2. sql filename secret (for decryption)
+    # 1. sql file path
+    # 2. sql file secret (for decryption)
     local output_sql_name
     output_sql_name="$(echo "$1" | cut -d. -f1)"
 
@@ -19,7 +19,7 @@ export_database() {
     # 1. container name
     # 2. root password
     # 3. database name
-    # 4. (optional) output sql filename
+    # 4. (optional) output sql file path
     local sql_filename
     sql_filename=${4:-"database.sql"}
 
@@ -32,7 +32,7 @@ export_database_secure() {
     # 1. container name
     # 2. root password
     # 3. database name
-    # 4. (optional) output sql filename
+    # 4. (optional) output sql file path
     local sql_filename
     sql_filename=${4:-"database.enc.gz"}
 
@@ -45,10 +45,27 @@ import_database() {
     # 1. container name
     # 2. root password
     # 3. database name
-    # 4. output sql filename
+    # 4. sql file path
 
     # TODO: Don't send password on the CLI
     docker exec -i "$1" mysql -uroot -p"$2" "$3" <"$4"
+}
+
+import_encrypted_database() {
+    # Parameters
+    # 1. container name
+    # 2. root password (assumed to be the same as the encrypted database secret)
+    # 3. database name
+    # 4. sql file path
+
+    local decrypted_sql_file_path
+    decrypted_sql_file_path="$(echo "$4" | cut -d. -f1)".sql
+
+    decrypt_database_backup "$4" "$2"
+    
+    import_database "$1" "$2" "$3" "$decrypted_sql_file_path"
+
+    rm "$decrypted_sql_file_path" || exit 1
 }
 
 ### Services
@@ -71,9 +88,14 @@ deploy() {
 
 # Deploy all is perfect for a cold-start server deployment
 deploy_all() {
-    echo "You are about to deploy all production services and websites, before proceeding, ensure that Traefik is up and running. Press any button to continue."
+    echo "You are about to deploy all production services and websites. Press any button to continue."
     read -r
     echo "Deploying all services and websites..."
+
+    # Deploy Traefik before other services
+    cd "$SRVINFRA_SERVICES_DIR/traefik" || exit 0 # don't fail if traefik doesn't exist
+    docker compose up -d --build --quiet-pull
+    cd || exit 1
 
     # Deploy services
     cd "$SRVINFRA_SERVICES_DIR" || exit 1

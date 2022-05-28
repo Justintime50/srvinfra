@@ -62,7 +62,7 @@ import_encrypted_database() {
     decrypted_sql_file_path="$(echo "$4" | cut -d. -f1)".sql
 
     decrypt_database_backup "$4" "$2"
-    
+
     import_database "$1" "$2" "$3" "$decrypted_sql_file_path"
 
     rm "$decrypted_sql_file_path" || exit 1

@@ -80,7 +80,7 @@ deploy() {
         docker compose -f docker-compose.yml up -d --build
     elif [[ "$1" = "website" ]]; then
         cd "$SRVINFRA_WEBSITES_DIR"/"$2" || exit 1
-        docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build --quiet-pull
+        docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build --force-recreate --quiet-pull
     else
         echo "$1 isn't a valid action, try again."
     fi
@@ -101,7 +101,7 @@ deploy_all() {
     cd "$SRVINFRA_SERVICES_DIR" || exit 1
     for DIR in */; do
         echo "Deploying $DIR..."
-        docker compose -f "$DIR"/docker-compose.yml up -d --build --quiet-pull
+        docker compose -f "$DIR"/docker-compose.yml up -d --build --force-recreate --quiet-pull
     done
 
     # Deploy websites
@@ -110,7 +110,7 @@ deploy_all() {
         cd "$TOP_DIR" || exit 1
         for DIR in */; do
             echo "Deploying $DIR..."
-            docker compose -f "$DIR"/docker-compose.yml -f "$DIR"/docker-compose-prod.yml up -d --build --quiet-pull
+            docker compose -f "$DIR"/docker-compose.yml -f "$DIR"/docker-compose-prod.yml up -d --build --force-recreate --quiet-pull
         done
         cd .. || exit 1
     done
@@ -127,7 +127,7 @@ update() {
     # 1. service name
     echo "Updating $1..."
     cd "$SRVINFRA_SERVICES_DIR"/"$1" || exit 1
-    docker compose pull && docker-compose up -d --build --quiet-pull || exit 1
+    docker compose pull && docker-compose up -d --build --force-recreate --quiet-pull || exit 1
     echo "$1 updated!"
 }
 
@@ -137,7 +137,7 @@ update_all() {
     cd "$SRVINFRA_SERVICES_DIR" || exit 1
     for DIR in */; do
         printf '%s\n' "$DIR"
-        cd "$DIR" && docker compose pull && docker-compose up -d --build --quiet-pull
+        cd "$DIR" && docker compose pull && docker-compose up -d --build --force-recreate --quiet-pull
         echo "$DIR updating..."
         cd .. || exit 1
     done

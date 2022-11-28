@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.9.0 (2022-11-27)
+
+- Force recreating containers even if config or images haven't changed
+
 ## v0.8.0 (2022-05-27)
 
 - Attempts to start Traefik before other services on `deploy_all` command

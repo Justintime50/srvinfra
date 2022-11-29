@@ -77,7 +77,7 @@ deploy() {
     # 2. service/website directory path (eg: justintime50/justinpaulhammond)
     if [[ "$1" = "service" ]]; then
         cd "$SRVINFRA_SERVICES_DIR"/"$2" || exit 1
-        docker compose -f docker-compose.yml up -d --build
+        docker compose -f docker-compose.yml up -d --build --force-recreate --quiet-pull
     elif [[ "$1" = "website" ]]; then
         cd "$SRVINFRA_WEBSITES_DIR"/"$2" || exit 1
         docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build --force-recreate --quiet-pull
@@ -94,7 +94,7 @@ deploy_all() {
 
     # Deploy Traefik before other services
     cd "$SRVINFRA_SERVICES_DIR/traefik" || exit 0 # don't fail if traefik doesn't exist
-    docker compose up -d --build --quiet-pull
+    docker compose up -d --build --force-recreate --quiet-pull
     cd || exit 1
 
     # Deploy services

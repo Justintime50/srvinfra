@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.9.1 (2022-11-28)
+
+- Fixes a command that missed the force recreate flag
+
 ## v0.9.0 (2022-11-27)
 
 - Force recreating containers even if config or images haven't changed

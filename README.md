@@ -2,7 +2,7 @@
 
 # srvinfra
 
-`srvinfra` is a tool to deploy, update, and maintain services and websites on a server hosted by Docker.
+`srvinfra` is a tool to deploy, update, and maintain Docker projects hosted on a server.
 
 [![Build](https://github.com/Justintime50/srvinfra/workflows/build/badge.svg)](https://github.com/Justintime50/srvinfra/actions)
 [![Version](https://img.shields.io/github/v/tag/justintime50/srvinfra)](https://github.com/justintime50/srvinfra/releases)
@@ -12,7 +12,9 @@
 
 </div>
 
-I store all my services and websites in the same place and have similar commands to update and deploy them but found myself needing to constantly navigate all over the filesystem to run Docker commands. With `srvinfra`, I can deploy and manage my services and websites with ease using a unified CLI syntax.
+I store all my Docker services in the same place and have similar commands to update and deploy them but found myself needing to constantly navigate all over the filesystem to run Docker commands. With `srvinfra`, I can deploy and manage my services with ease from anywhere using a unified CLI syntax.
+
+`srvinfra` will stash any local changes of a project, pull down new changes via `git`, then deploy the service via Docker. For services that have a production configuration, it will need to be titled `docker-compose-prod.yaml` and have a normal `docker-compose.yaml` file as well. Either `.yml` or `.yaml` extensions are supported. When a service does not have a production configuration, `srvinfra` will deploy using the base config.
 
 ## Install
 
@@ -24,25 +26,22 @@ brew tap justintime50/formulas
 brew install srvinfra
 ```
 
-**NOTE:** `srvinfra` assumes `Docker Compose v2` is active and not `v1`.
+**NOTE:** `srvinfra` assumes `Docker Compose v2` is installed.
 
-Once you have `srvinfra` installed, you'll need to setup two environment variables:
+Once you have `srvinfra` installed, you'll need to setup an environment variable:
 
 ```bash
 echo 'export SRVINFRA_SERVICES_DIR=path/to/dir' >> ~/.zshrc
-echo 'export SRVINFRA_WEBSITES_DIR=path/to/dir' >> ~/.zshrc
 ```
 
 ## Usage
 
 ```bash
-# Deploy a service
-srvinfra deploy service plex
+# Deploy a service (relative from $SRVINFRA_SERVICES_DIR), subdirectories are possible
+srvinfra deploy justintime50/justinpaulhammond
+srvinfra deploy justintime50/server-infra/plex
 
-# Deploy a website
-srvinfra deploy website justintime50/justinpaulhammond
-
-# Deploy all services and websites (great for server cold-start)
+# Deploy all services (great for server cold-start)
 srvinfra deploy_all
 
 # Decrypt a compressed SQL backup file
@@ -71,7 +70,7 @@ srvinfra import_encrypted_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABAS
 srvinfra status justinpaulhammond
 
 # Update a service
-srvinfra update plex
+srvinfra update justintime50/server-infra/plex
 
 # Update all services
 srvinfra update_all

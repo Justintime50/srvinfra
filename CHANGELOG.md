@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.10.0 (2023-01-12)
+
+- Consolidates `SRVINFRA_WEBSITES_DIR` and `SRVINFRA_SERVICES_DIR` into `SRVINFRA_SERVICES_DIR`
+  - srvinfra will now determine if there are prod `docker-compose` files in the directory specified and use those when possible and do a normal `docker compose up` when not
+  - When deploying a service, you will no longer need to specify `website` or `service` since srvinfra will determine which kind of `docker-compose` files are present and change the underlying command accordingly
+
 ## v0.9.1 (2022-11-28)
 
 - Fixes a command that missed the force recreate flag

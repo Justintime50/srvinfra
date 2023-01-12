@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Srvinfra is a tool to deploy and update services and websites on a server hosted by Docker
+# srvinfra is a tool to deploy and update services on a server hosted by Docker
 
 ### Databases
 
@@ -70,27 +70,27 @@ import_encrypted_database() {
 
 ### Services
 
-# Deploy a service or website depending on context
+# Deploy a service
 deploy() {
     # Parameters
-    # 1. enum: service | website
-    # 2. service/website directory path (eg: justintime50/justinpaulhammond)
-    if [[ "$1" = "service" ]]; then
-        cd "$SRVINFRA_SERVICES_DIR"/"$2" || exit 1
-        docker compose -f docker-compose.yml up -d --build --force-recreate --quiet-pull
-    elif [[ "$1" = "website" ]]; then
-        cd "$SRVINFRA_WEBSITES_DIR"/"$2" || exit 1
+    # 1. service directory path (eg: justintime50/justinpaulhammond)
+    cd "$SRVINFRA_SERVICES_DIR"/"$1" || exit 1
+    git stash && git pull
+
+    if [[ -f "docker-compose-prod.yml" ]]; then
         docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build --force-recreate --quiet-pull
+    elif [[ -f "docker-compose-prod.yaml" ]]; then
+        docker compose -f docker-compose.yaml -f docker-compose-prod.yaml up -d --build --force-recreate --quiet-pull
     else
-        echo "$1 isn't a valid action, try again."
+        docker compose -d --build --force-recreate --quiet-pull
     fi
 }
 
 # Deploy all is perfect for a cold-start server deployment
 deploy_all() {
-    echo "You are about to deploy all production services and websites. Press any button to continue."
+    echo "You are about to deploy all production services. Press any button to continue."
     read -r
-    echo "Deploying all services and websites..."
+    echo "Deploying all services..."
 
     # Deploy Traefik before other services
     cd "$SRVINFRA_SERVICES_DIR/traefik" || exit 0 # don't fail if traefik doesn't exist
@@ -101,18 +101,15 @@ deploy_all() {
     cd "$SRVINFRA_SERVICES_DIR" || exit 1
     for DIR in */; do
         echo "Deploying $DIR..."
-        docker compose -f "$DIR"/docker-compose.yml up -d --build --force-recreate --quiet-pull
-    done
+        git stash && git pull
 
-    # Deploy websites
-    cd "$SRVINFRA_WEBSITES_DIR" || exit 1
-    for TOP_DIR in */; do
-        cd "$TOP_DIR" || exit 1
-        for DIR in */; do
-            echo "Deploying $DIR..."
-            docker compose -f "$DIR"/docker-compose.yml -f "$DIR"/docker-compose-prod.yml up -d --build --force-recreate --quiet-pull
-        done
-        cd .. || exit 1
+        if [[ -f "docker-compose-prod.yml" ]]; then
+            docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build --force-recreate --quiet-pull
+        elif [[ -f "docker-compose-prod.yaml" ]]; then
+            docker compose -f docker-compose.yaml -f docker-compose-prod.yaml up -d --build --force-recreate --quiet-pull
+        else
+            docker compose -d --build --force-recreate --quiet-pull
+        fi
     done
 }
 
@@ -127,7 +124,7 @@ update() {
     # 1. service name
     echo "Updating $1..."
     cd "$SRVINFRA_SERVICES_DIR"/"$1" || exit 1
-    docker compose pull && docker-compose up -d --build --force-recreate --quiet-pull || exit 1
+    docker compose pull && docker compose up -d --build --force-recreate --quiet-pull || exit 1
     echo "$1 updated!"
 }
 
@@ -137,7 +134,7 @@ update_all() {
     cd "$SRVINFRA_SERVICES_DIR" || exit 1
     for DIR in */; do
         printf '%s\n' "$DIR"
-        cd "$DIR" && docker compose pull && docker-compose up -d --build --force-recreate --quiet-pull
+        cd "$DIR" && docker compose pull && docker compose up -d --build --force-recreate --quiet-pull
         echo "$DIR updating..."
         cd .. || exit 1
     done

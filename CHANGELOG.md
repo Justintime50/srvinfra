@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.0.0 (2023-08-25)
+
+- Now uses `-md sha512 -pbkdf2` flags for openssl commands when encrypting and decrypting databases to fix deprecation warning
+  - **NOTE:** Exported databases prior to v1.0.0 will not be able to be decrypted with this version due to the new flags, if older/newer database files need (d)encypring, you may need to change versions of this tool to match the one the original file was generated with
+- Passes the `-c` command to gzip to supress the `unknown compression format` error
+
 ## v0.10.0 (2023-01-12)
 
 - Consolidates `SRVINFRA_WEBSITES_DIR` and `SRVINFRA_SERVICES_DIR` into `SRVINFRA_SERVICES_DIR`

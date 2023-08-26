@@ -11,49 +11,46 @@ decrypt_database_backup() {
     local output_sql_name
     output_sql_name="$(echo "$1" | cut -d. -f1)"
 
-    openssl enc -aes-256-cbc -d -in "$1" -k "$2" | gzip -d >"$output_sql_name".sql
+    openssl enc -aes-256-cbc -md sha512 -pbkdf2 -d -in "$1" -k "$2" | gzip -c -d >"$output_sql_name".sql
 }
 
 export_database() {
     # Parameters
-    # 1. container name
+    # 1. database container name
     # 2. root password
     # 3. database name
     # 4. (optional) output sql file path
     local sql_filename
     sql_filename=${4:-"database.sql"}
 
-    # TODO: Don't send password on the CLI
     docker exec -i "$1" mysqldump -uroot -p"$2" "$3" >"$sql_filename"
 }
 
 export_database_secure() {
     # Parameters
-    # 1. container name
+    # 1. database container name
     # 2. root password
     # 3. database name
     # 4. (optional) output sql file path
     local sql_filename
     sql_filename=${4:-"database.enc.gz"}
 
-    # TODO: Don't send password on the CLI
-    docker exec -i "$1" mysqldump -uroot -p"$2" "$3" | gzip | openssl enc -aes-256-cbc -k "$2" >"$sql_filename"
+    docker exec -i "$1" mysqldump -uroot -p"$2" "$3" | gzip -c | openssl enc -aes-256-cbc -md sha512 -pbkdf2 -k "$2" >"$sql_filename"
 }
 
 import_database() {
     # Parameters
-    # 1. container name
+    # 1. database container name
     # 2. root password
     # 3. database name
     # 4. sql file path
 
-    # TODO: Don't send password on the CLI
     docker exec -i "$1" mysql -uroot -p"$2" "$3" <"$4"
 }
 
 import_encrypted_database() {
     # Parameters
-    # 1. container name
+    # 1. database container name
     # 2. root password (assumed to be the same as the encrypted database secret)
     # 3. database name
     # 4. sql file path

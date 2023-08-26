@@ -45,6 +45,7 @@ srvinfra deploy justintime50/server-infra/plex
 srvinfra deploy_all
 
 # Decrypt a compressed SQL backup file
+# The BACKUP_SECRET is assumed to be the same as the database ROOT_PASSWORD
 srvinfra decrypt_database_backup PATH_TO_SQL_FILE BACKUP_SECRET
 
 # Export a SQL database from a Docker container
@@ -63,7 +64,7 @@ srvinfra import_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PAT
 
 # Import an encrypted & compressed SQL database to a Docker container (command combines `decrypt_database_backup` and `import_database` commands)
 # Note: May need to quote `ROOT_PASSWORD`
-# ROOT_PASSWORD is assumed to be the same as the database secret used to encrypt it
+# ROOT_PASSWORD is assumed to be the same as the database root password
 srvinfra import_encrypted_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
 # Get the status of a Docker container by name

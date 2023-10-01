@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.1.0 (2023-09-30)
+
+- Adds `SRVINFRA_DATABASE_EXECUTABLE` as an env var which can be set to `mariadb` to override the default `mysql` allowing users to change the database executable used with srvinfra
+- Sets `set -e` flag to ensure srvinfra fails on any error where previously it could fail silently
+
 ## v1.0.0 (2023-08-25)
 
 - Now uses `-md sha512 -pbkdf2` flags for openssl commands when encrypting and decrypting databases to fix deprecation warning

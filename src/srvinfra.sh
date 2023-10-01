@@ -2,7 +2,17 @@
 
 # srvinfra is a tool to deploy and update services on a server hosted by Docker
 
+set -e
+
 ### Databases
+
+SRVINFRA_DATABASE_EXECUTABLE=${SRVINFRA_DATABASE_EXECUTABLE:-"mysql"}
+
+if [[ "$SRVINFRA_DATABASE_EXECUTABLE" == "mariadb" ]]; then
+    SRVINFRA_DATABASE_BACKUP_EXECUTABLE="mariadb-dump"
+else
+    SRVINFRA_DATABASE_BACKUP_EXECUTABLE="mysqldump"
+fi
 
 decrypt_database_backup() {
     # Parameters
@@ -23,7 +33,7 @@ export_database() {
     local sql_filename
     sql_filename=${4:-"database.sql"}
 
-    docker exec -i "$1" mysqldump -uroot -p"$2" "$3" >"$sql_filename"
+    docker exec -i "$1" "$SRVINFRA_DATABASE_BACKUP_EXECUTABLE" -uroot -p"$2" "$3" >"$sql_filename"
 }
 
 export_database_secure() {
@@ -35,7 +45,7 @@ export_database_secure() {
     local sql_filename
     sql_filename=${4:-"database.enc.gz"}
 
-    docker exec -i "$1" mysqldump -uroot -p"$2" "$3" | gzip -c | openssl enc -aes-256-cbc -md sha512 -pbkdf2 -k "$2" >"$sql_filename"
+    docker exec -i "$1" "$SRVINFRA_DATABASE_BACKUP_EXECUTABLE" -uroot -p"$2" "$3" | gzip -c | openssl enc -aes-256-cbc -md sha512 -pbkdf2 -k "$2" >"$sql_filename"
 }
 
 import_database() {
@@ -45,7 +55,7 @@ import_database() {
     # 3. database name
     # 4. sql file path
 
-    docker exec -i "$1" mysql -uroot -p"$2" "$3" <"$4"
+    docker exec -i "$1" "$SRVINFRA_DATABASE_EXECUTABLE" -uroot -p"$2" "$3" <"$4"
 }
 
 import_encrypted_database() {

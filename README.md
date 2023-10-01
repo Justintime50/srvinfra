@@ -34,6 +34,12 @@ Once you have `srvinfra` installed, you'll need to setup an environment variable
 echo 'export SRVINFRA_SERVICES_DIR=path/to/dir' >> ~/.zshrc
 ```
 
+You can change the database executable used from `mysql` to `mariadb` by setting it via the `SRVINFRA_DATABASE_EXECUTABLE` env var:
+
+```bash
+echo 'export SRVINFRA_DATABASE_EXECUTABLE=mariadb' >> ~/.zshrc
+```
+
 ## Usage
 
 ```bash

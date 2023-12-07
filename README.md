@@ -42,6 +42,8 @@ echo 'export SRVINFRA_DATABASE_EXECUTABLE=mariadb' >> ~/.zshrc
 
 ## Usage
 
+> NOTE: You may need to quote `ROOT_PASSWORD` in the commands below.
+
 ```bash
 # Deploy a service (relative from $SRVINFRA_SERVICES_DIR), subdirectories are possible
 srvinfra deploy justintime50/justinpaulhammond
@@ -54,22 +56,18 @@ srvinfra deploy_all
 # The BACKUP_SECRET is assumed to be the same as the database ROOT_PASSWORD
 srvinfra decrypt_database_backup PATH_TO_SQL_FILE BACKUP_SECRET
 
-# Export a SQL database from a Docker container
+# Export a SQL database from a Docker container, unencrypted and uncompressed
 # Default PATH_TO_SQL_FILE: './database.sql'
-# Note: May need to quote `ROOT_PASSWORD`
 srvinfra export_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
-# Export a compressed SQL databse from a Docker container and encrypt the backup (recommended)
-# Default PATH_TO_SQL_FILE: './database.sql'
-# Note: May need to quote `ROOT_PASSWORD`
+# Export a compressed SQL database from a Docker container and encrypt the backup (recommended)
+# Default PATH_TO_SQL_FILE: './database.enc.gz'
 srvinfra export_database_secure DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
 # Import a SQL database to a Docker container
-# Note: May need to quote `ROOT_PASSWORD`
 srvinfra import_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
 # Import an encrypted & compressed SQL database to a Docker container (command combines `decrypt_database_backup` and `import_database` commands)
-# Note: May need to quote `ROOT_PASSWORD`
 # ROOT_PASSWORD is assumed to be the same as the database root password
 srvinfra import_encrypted_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 

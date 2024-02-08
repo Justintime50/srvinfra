@@ -33,7 +33,13 @@ export_database() {
     local sql_filename
     sql_filename=${4:-"database.sql"}
 
-    docker exec -i "$1" "$SRVINFRA_DATABASE_BACKUP_EXECUTABLE" -uroot -p"$2" "$3" >"$sql_filename"
+    docker exec -i "$1" "$SRVINFRA_DATABASE_BACKUP_EXECUTABLE" -uroot -p"$2" "$3" >"$sql_filename" || echo "Could not export database!" && exit 1
+
+    # Check if we generate a proper export
+    if [[ $(file "$sql_filename") != *ASCII\ text || ! -s "$sql_filename" ]]; then
+        echo "The exported file is not valid SQL!"
+        exit 1
+    fi
 }
 
 export_database_secure() {
@@ -45,7 +51,13 @@ export_database_secure() {
     local sql_filename
     sql_filename=${4:-"database.enc.gz"}
 
-    docker exec -i "$1" "$SRVINFRA_DATABASE_BACKUP_EXECUTABLE" -uroot -p"$2" "$3" | gzip -c | openssl enc -aes-256-cbc -md sha512 -pbkdf2 -k "$2" >"$sql_filename"
+    docker exec -i "$1" "$SRVINFRA_DATABASE_BACKUP_EXECUTABLE" -uroot -p"$2" "$3" | gzip -c | openssl enc -aes-256-cbc -md sha512 -pbkdf2 -k "$2" >"$sql_filename" || echo "Could not export database!" && exit 1
+
+    # Check if we generate a proper export
+    if [[ $(file "$sql_filename") != *"openssl enc'd data with salted password" || ! -s "$sql_filename" ]]; then
+        echo "The exported file is not a valid encrypted file!"
+        exit 1
+    fi
 }
 
 import_database() {

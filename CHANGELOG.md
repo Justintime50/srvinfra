@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.2.0 (2024-02-08)
+
+- Adds file checks on output database exports to ensure they are valid
+- Adds error output when a database cannot be exported
+
 ## v1.1.0 (2023-09-30)
 
 - Adds `SRVINFRA_DATABASE_EXECUTABLE` as an env var which can be set to `mariadb` to override the default `mysql` allowing users to change the database executable used with srvinfra

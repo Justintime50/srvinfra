@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.2.1 (2024-02-15)
+
+- Fix a bug introduced in the last version that would exit with code 1 even with success due to bad syntax
+
 ## v1.2.0 (2024-02-08)
 
 - Adds file checks on output database exports to ensure they are valid

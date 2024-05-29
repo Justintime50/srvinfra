@@ -65,6 +65,7 @@ srvinfra export_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PAT
 srvinfra export_database_secure DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
 # Import a SQL database to a Docker container
+# NOTE: This can be used to run any arbitrary SQL commands from a file, not just importing a previously exported file
 srvinfra import_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABASE_NAME PATH_TO_SQL_FILE
 
 # Import an encrypted & compressed SQL database to a Docker container (command combines `decrypt_database_backup` and `import_database` commands)

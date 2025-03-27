@@ -45,12 +45,9 @@ echo 'export SRVINFRA_DATABASE_EXECUTABLE=mariadb' >> ~/.zshrc
 > NOTE: You may need to quote `ROOT_PASSWORD` in the commands below.
 
 ```bash
-# Deploy a service (relative from $SRVINFRA_SERVICES_DIR), subdirectories are possible
+# Deploy a docker-compose service (relative from $SRVINFRA_SERVICES_DIR), subdirectories are possible
 srvinfra deploy justintime50/justinpaulhammond
 srvinfra deploy justintime50/server-infra/plex
-
-# Deploy all services (great for server cold-start)
-srvinfra deploy_all
 
 # Decrypt a compressed SQL backup file
 # The BACKUP_SECRET is assumed to be the same as the database ROOT_PASSWORD
@@ -75,11 +72,10 @@ srvinfra import_encrypted_database DATABASE_CONTAINER_NAME ROOT_PASSWORD DATABAS
 # Get the status of a Docker container by name
 srvinfra status justinpaulhammond
 
-# Update a service
-srvinfra update justintime50/server-infra/plex
-
-# Update all services
-srvinfra update_all
+# Enter a Docker container's shell by closest match name (eg: partial name)
+# NOTE: This will enter the first found container with the closest matching name. Multiple containers
+# with similar/same names on a single host may be unreachable via this function
+srvinfra enter justinpaulhammond
 
 # View all available commands
 srvinfra help

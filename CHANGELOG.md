@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v2.0.0 (2025-03-26)
+
+- Adds `srvinfra enter CONTAINER_NAME` allowing you to enter a Docker container with ease
+- Removes functions:
+  - `srvinfra deploy_all`
+  - `srvinfra update`
+  - `srvinfra update_all`
+
 ## v1.2.1 (2024-02-15)
 
 - Fix a bug introduced in the last version that would exit with code 1 even with success due to bad syntax

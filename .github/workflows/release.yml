@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-      - "*"
+      - '*'
 
 jobs:
   homebrew-releaser:
@@ -9,7 +9,7 @@ jobs:
     name: homebrew-releaser
     steps:
       - name: Release my project to my Homebrew tap
-        uses: Justintime50/homebrew-releaser@v1
+        uses: Justintime50/homebrew-releaser@v2
         with:
           commit_owner: Justintime50
           commit_email: 39606064+Justintime50@users.noreply.github.com

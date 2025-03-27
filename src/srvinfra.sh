@@ -14,22 +14,24 @@ else
     SRVINFRA_DATABASE_BACKUP_EXECUTABLE="mysqldump"
 fi
 
+# Decrypt a database file so it can be inspected
+# Parameters:
+# 1. sql file path
+# 2. sql file secret (for decryption)
 decrypt_database_backup() {
-    # Parameters
-    # 1. sql file path
-    # 2. sql file secret (for decryption)
     local output_sql_name
     output_sql_name="$(echo "$1" | cut -d. -f1)"
 
     openssl enc -aes-256-cbc -md sha512 -pbkdf2 -d -in "$1" -k "$2" | gzip -c -d >"$output_sql_name".sql
 }
 
+# Export a database from a container to a file (it will be in plain text)
+# Parameters:
+# 1. database container name
+# 2. root password
+# 3. database name
+# 4. (optional) output sql file path
 export_database() {
-    # Parameters
-    # 1. database container name
-    # 2. root password
-    # 3. database name
-    # 4. (optional) output sql file path
     local sql_filename
     sql_filename=${4:-"database.sql"}
 
@@ -45,12 +47,13 @@ export_database() {
     fi
 }
 
+# Export a database from a container to a file (it will be encrypted)
+# Parameters:
+# 1. database container name
+# 2. root password
+# 3. database name
+# 4. (optional) output sql file path
 export_database_secure() {
-    # Parameters
-    # 1. database container name
-    # 2. root password
-    # 3. database name
-    # 4. (optional) output sql file path
     local sql_filename
     sql_filename=${4:-"database.enc.gz"}
 
@@ -66,23 +69,23 @@ export_database_secure() {
     fi
 }
 
+# Import a plain-text database from a file to a database container
+# Parameters:
+# 1. database container name
+# 2. root password
+# 3. database name
+# 4. sql file path
 import_database() {
-    # Parameters
-    # 1. database container name
-    # 2. root password
-    # 3. database name
-    # 4. sql file path
-
     docker exec -i "$1" "$SRVINFRA_DATABASE_EXECUTABLE" -uroot -p"$2" "$3" <"$4"
 }
 
+# Import an encrypted database from a file to a database container
+# Parameters:
+# 1. database container name
+# 2. root password (assumed to be the same as the encrypted database secret)
+# 3. database name
+# 4. sql file path
 import_encrypted_database() {
-    # Parameters
-    # 1. database container name
-    # 2. root password (assumed to be the same as the encrypted database secret)
-    # 3. database name
-    # 4. sql file path
-
     local decrypted_sql_file_path
     decrypted_sql_file_path="$(echo "$4" | cut -d. -f1)".sql
 
@@ -95,10 +98,10 @@ import_encrypted_database() {
 
 ### Services
 
-# Deploy a service
+# Deploy a service using docker-compose
+# Parameters:
+# 1. service directory path (eg: justintime50/justinpaulhammond)
 deploy() {
-    # Parameters
-    # 1. service directory path (eg: justintime50/justinpaulhammond)
     cd "$SRVINFRA_SERVICES_DIR"/"$1" || exit 1
     git stash && git pull
 
@@ -111,65 +114,25 @@ deploy() {
     fi
 }
 
-# Deploy all is perfect for a cold-start server deployment
-deploy_all() {
-    echo "You are about to deploy all production services. Press any button to continue."
-    read -r
-    echo "Deploying all services..."
-
-    # Deploy Traefik before other services
-    cd "$SRVINFRA_SERVICES_DIR/traefik" || exit 0 # don't fail if traefik doesn't exist
-    docker compose up -d --build --force-recreate --quiet-pull
-    cd || exit 1
-
-    # Deploy services
-    cd "$SRVINFRA_SERVICES_DIR" || exit 1
-    for DIR in */; do
-        echo "Deploying $DIR..."
-        git stash && git pull
-
-        if [[ -f "docker-compose-prod.yml" ]]; then
-            docker compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build --force-recreate --quiet-pull
-        elif [[ -f "docker-compose-prod.yaml" ]]; then
-            docker compose -f docker-compose.yaml -f docker-compose-prod.yaml up -d --build --force-recreate --quiet-pull
-        else
-            docker compose -d --build --force-recreate --quiet-pull
-        fi
-    done
-}
-
 # Get the status of a Docker container by name
 status() {
     docker ps --filter name="$1"
 }
 
-# Update a single service, assumes the Docker tag has been updated or is not pinned
-update() {
-    # Parameters
-    # 1. service name
-    echo "Updating $1..."
-    cd "$SRVINFRA_SERVICES_DIR"/"$1" || exit 1
-    docker compose pull && docker compose up -d --build --force-recreate --quiet-pull || exit 1
-    echo "$1 updated!"
-}
-
-# Updates all services, assumes the Docker tags have been updated or are not pinned
-update_all() {
-    echo "Updating all services..."
-    cd "$SRVINFRA_SERVICES_DIR" || exit 1
-    for DIR in */; do
-        printf '%s\n' "$DIR"
-        cd "$DIR" && docker compose pull && docker compose up -d --build --force-recreate --quiet-pull
-        echo "$DIR updating..."
-        cd .. || exit 1
-    done
+# Enter a Docker container's shell by closest match name (eg: partial name)
+# Parameters:
+# 1. container name
+enter() {
+    local container_id
+    container_id=$(docker ps --filter "name=$1" --format "{{.ID}}" | head -n 1)
+    docker exec -it "$container_id" sh
 }
 
 ### Utilities
 
+# Check if the command passed is valid or not.
+# Run if it is a valid command, warn and exit if it is not.
 command_router() {
-    # Check if the command passed is valid or not.
-    # Run if it is a valid command, warn and exit if it is not.
     if type "$1" >/dev/null; then
         "$@"
     else
@@ -178,6 +141,7 @@ command_router() {
     fi
 }
 
+# Display help information about the tool
 help() {
     echo "The following commands are available via 'srvinfra':"
     declare -F | awk '{print $NF}' | sort | grep -E -v "^_"
